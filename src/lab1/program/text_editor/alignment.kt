@@ -11,7 +11,7 @@ fun alignText(alignment: Alignment, width: Int, text : ArrayList<String>)
         Alignment.CENTER -> centerAlignment(width, text)
         Alignment.LEFT -> leftAlignment(width, text)
         Alignment.RIGHT -> rightAlignment(width, text)
-        else -> return
+        //else -> return
     }
 }
 
@@ -135,6 +135,25 @@ private fun alignToWidth(width : Int, text : ArrayList<String>)
             }
         }
     }
+}
+
+private fun leftAlignment(width : Int, text : ArrayList<String>)
+{
+    for(i in 0..text.size-1)
+        text[i] = text[i] + " ".repeat(width - text[i].length)
+}
+
+private fun rightAlignment(width : Int, text : ArrayList<String>)
+{
+    for(i in 0..text.size-1)
+        text[i] = " ".repeat(width - text[i].length) + text[i]
+}
+
+private fun centerAlignment(width : Int, text : ArrayList<String>)
+{
+    for(i in 0..text.size-1)
+        text[i] = " ".repeat((width - text[i].length) / 2) + text[i] +
+                " ".repeat((width - text[i].length) - (width - text[i].length) / 2)
 }
 
 enum class Alignment
