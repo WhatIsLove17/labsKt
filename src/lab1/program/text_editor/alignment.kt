@@ -24,6 +24,55 @@ private fun toOneLine(text : ArrayList<String>)
     }
 }
 
+private fun spaceDeleter(text : ArrayList<String>)
+{
+// removing last spaces
+    if (text[0][0] == ' ')
+    {
+        var i = 1
+        while(text[0][i] == ' ')
+            i++
+        text[0] = text[0].substring(i)
+    }
+//////////////
+
+// removing first spaces
+    if (text[0][text[0].length - 1] == ' ')
+    {
+        var i = text[0].length - 2
+        while(text[0][i] == ' ')
+            i--
+        text[0] = text[0].substring(0, i+1)
+    }
+///////////////
+
+// removing duplicate spaces
+    var i = 0
+    while(i < text[0].length)
+    {
+        if (text[0][i] == ' ')
+        {
+            var j = i + 1
+            while (text[0][j] == ' ')
+                j++
+            text[0] = text[0].removeRange(i+1, j)
+        }
+        i++
+    }
+///////////////
+
+// removing spaces before special symbols
+    i = 1;
+    while(i < text[0].length)
+    {
+        if (text[0][i] in arrayOf(',', '.', '!', ':', ';', '?') && text[0][i-1] == ' ')
+        {
+            text[0] = text[0].removeRange(i-1, i)
+        }
+        i++
+    }
+}
+
 private fun wordTransfer(width : Int, text : ArrayList<String>)
 {
     var i = 0
