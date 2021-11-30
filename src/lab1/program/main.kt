@@ -1,10 +1,12 @@
+package lab1.program
+
 import lab1.program.text_editor.*
 
 fun main()
 {
     //var text = ArrayList<String>()
     //println("\nВведите текст для форматирования:\n")
-    //inputText(text)
+    //lab1.program.inputText(text)
     val text = arrayListOf("Ох , лето красное! " +
             "любил бы я тебя , Когда б не зной , да пыль, да комары , да мухи . " +
             "Ты , все душевные способности губя , " +

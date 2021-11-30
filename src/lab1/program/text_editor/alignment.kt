@@ -62,7 +62,7 @@ private fun spaceDeleter(text : ArrayList<String>)
 ///////////////
 
 // removing spaces before special symbols
-    i = 1;
+    i = 1
     while(i < text[0].length)
     {
         if (text[0][i] in arrayOf(',', '.', '!', ':', ';', '?') && text[0][i-1] == ' ')
@@ -86,7 +86,7 @@ private fun wordTransfer(width : Int, text : ArrayList<String>)
             if (text[i].lastIndexOf(' ') != -1) {
             // transfer one word if there is space
                 text[i + 1] = text[i].substringAfterLast(' ') +
-                        if (text[i+1].length != 0) {" "} else {""} + text[i + 1]
+                        if (text[i + 1].isNotEmpty()) {" "} else {""} + text[i + 1]
                 text[i] = text[i].substringBeforeLast(' ')
             }
             else
@@ -104,7 +104,7 @@ private fun wordTransfer(width : Int, text : ArrayList<String>)
 
 private fun alignToWidth(width : Int, text : ArrayList<String>)
 {
-    for(i in 0..text.size-1)
+    for(i in 0 until text.size)
     {
         if (text[i].length < width)
         {
@@ -139,19 +139,19 @@ private fun alignToWidth(width : Int, text : ArrayList<String>)
 
 private fun leftAlignment(width : Int, text : ArrayList<String>)
 {
-    for(i in 0..text.size-1)
+    for(i in 0 until text.size)
         text[i] = text[i] + " ".repeat(width - text[i].length)
 }
 
 private fun rightAlignment(width : Int, text : ArrayList<String>)
 {
-    for(i in 0..text.size-1)
+    for(i in 0 until text.size)
         text[i] = " ".repeat(width - text[i].length) + text[i]
 }
 
 private fun centerAlignment(width : Int, text : ArrayList<String>)
 {
-    for(i in 0..text.size-1)
+    for(i in 0 until text.size)
         text[i] = " ".repeat((width - text[i].length) / 2) + text[i] +
                 " ".repeat((width - text[i].length) - (width - text[i].length) / 2)
 }
