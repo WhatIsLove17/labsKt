@@ -102,6 +102,41 @@ private fun wordTransfer(width : Int, text : ArrayList<String>)
     }
 }
 
+private fun alignToWidth(width : Int, text : ArrayList<String>)
+{
+    for(i in 0..text.size-1)
+    {
+        if (text[i].length < width)
+        {
+            // needSpaces is count of spaces needed for add to line
+            val needSpaces = width - text[i].length
+            // placesForSpaces is count of places we can insert spaces
+            val placesForSpaces = text[i].count { it == ' ' }
+            // spacesForOnePlace is same count of spaces for each place
+            val spacesForOnePlace = if (placesForSpaces != 0) needSpaces / placesForSpaces
+            else 0
+            // remainingSpaces is remainder of spaces
+            var remainingSpaces = if (placesForSpaces != 0) needSpaces % placesForSpaces
+            else 0
+            // remSpacesIsThere is indicator that remainingSpaces != 0
+            var remSpacesIsThere = 1
+            var currentPlaceIndex = 0
+            for (j in 1..placesForSpaces)
+            {
+                if (remainingSpaces == 0) remSpacesIsThere = 0
+                // looking for next space
+                currentPlaceIndex = text[i].indexOf(' ', currentPlaceIndex)
+                // insert the spaces
+                text[i] = text[i].substring(0, currentPlaceIndex + 1) +
+                        " ".repeat(spacesForOnePlace + remSpacesIsThere) +
+                        text[i].substring(currentPlaceIndex + 1)
+                currentPlaceIndex += spacesForOnePlace + remSpacesIsThere + 1
+                remainingSpaces--
+            }
+        }
+    }
+}
+
 enum class Alignment
 {
     LEFT,
