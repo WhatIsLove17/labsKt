@@ -15,6 +15,15 @@ fun alignText(alignment: Alignment, width: Int, text : ArrayList<String>)
     }
 }
 
+private fun toOneLine(text : ArrayList<String>)
+{
+    for(i in text.size-1 downTo 1)
+    {
+        text[i - 1] = text[i-1] + " " + text[i]
+        text.removeAt(text.lastIndex)
+    }
+}
+
 enum class Alignment
 {
     LEFT,
