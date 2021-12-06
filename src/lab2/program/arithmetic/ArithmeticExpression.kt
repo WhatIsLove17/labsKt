@@ -128,5 +128,121 @@ class ArithmeticExpression(expression : String) {
 
         return listExpression
     }
+
+    //method transfers infix to postfix
+    private fun infixToPostfix(expression: ArrayList<String>) : ArrayList<String>{
+        val stack = ArrayDeque<String>()
+        val newExp = ArrayList<String>()
+        expression.forEach {
+            when(it[0]){
+                in '0'..'9' -> newExp.add(it)
+                '(' -> stack.addLast(it)
+                ')' -> {
+                    while(stack.isNotEmpty()){
+                        if (stack.last() == "(") break
+                        newExp.add(stack.last())
+                        stack.removeLast()
+                    }
+                    if (stack.isNotEmpty()) stack.removeLast()
+                }
+                else -> {
+                    while(stack.isNotEmpty()){
+                        if (priority(it) > priority(stack.last())) break
+                        newExp.add(stack.last())
+                        stack.removeLast()
+                    }
+                    stack.addLast(it)
+                }
+            }
+        }
+        while(stack.isNotEmpty()) {
+            newExp.add(stack.last())
+            stack.removeLast()
+        }
+        return newExp
+    }
+    //method calculates expression's result
+    fun calculate() : Double
+    {
+        val stack = ArrayDeque <Double>()
+        this.postfixExpression.forEach {
+            val firstOperand : Double
+            val secondOperand : Double
+            when(it[0]){
+                in '0'..'9'->{
+                    stack.addLast(it.toDouble())
+                }
+                '*', '/', '^'->{
+                    if (stack.size < 2)
+                        throw IllegalArgumentException("Not enough operands")
+                    secondOperand = stack.last()
+                    stack.removeLast()
+                    firstOperand = stack.last()
+                    stack.removeLast()
+                    when(it){
+                        "*"->stack.addLast(firstOperand * secondOperand)
+                        "/"->stack.addLast(firstOperand / secondOperand)
+                        "^"->stack.addLast(firstOperand.pow(secondOperand))
+                    }
+                }
+                '+'->{
+                    if (it == "+"){
+                        if (stack.size < 2)
+                            throw IllegalArgumentException("Not enough operands")
+                        secondOperand = stack.last()
+                        stack.removeLast()
+                        firstOperand = stack.last()
+                        stack.removeLast()
+                        stack.addLast(firstOperand + secondOperand)
+                    }
+                }
+                '-'->{
+                    if (it == "-"){
+                        if (stack.size < 2)
+                            throw IllegalArgumentException("Not enough operands")
+                        secondOperand = stack.last()
+                        stack.removeLast()
+                        firstOperand = stack.last()
+                        stack.removeLast()
+                        stack.addLast(firstOperand - secondOperand)
+                    }
+                    else{
+                        if (stack.isEmpty())
+                            throw IllegalArgumentException("Not enough operands")
+                        stack[stack.lastIndex] = -stack[stack.lastIndex]
+                    }
+                }
+                's'->{
+                    if (stack.isEmpty())
+                        throw IllegalArgumentException("Not enough operands")
+                    stack[stack.lastIndex] = sin(stack.last())
+                }
+                't'->{
+                    if (stack.isEmpty())
+                        throw IllegalArgumentException("Not enough operands")
+                    stack[stack.lastIndex] = tan(stack.last())
+                }
+                'c'->{
+                    if (stack.isEmpty())
+                        throw IllegalArgumentException("Not enough operands")
+                    if (it == "cos")
+                        stack[stack.lastIndex] = cos(stack.last())
+                    else
+                        stack[stack.lastIndex] = 1/tan(stack.last())
+                }
+                'l'->{
+                    if (stack.isEmpty())
+                        throw IllegalArgumentException("Not enough operands")
+                    if (it == "lg")
+                        stack[stack.lastIndex] = log10(stack[stack.lastIndex])
+                    else
+                        stack[stack.lastIndex] = ln(stack[stack.lastIndex])
+                }
+            }
+        }
+        if (stack.size != 1)
+            throw IllegalArgumentException("Not enough operators")
+        return stack.last()
+    }
 }
 
