@@ -17,6 +17,6 @@ fun main() {
 
     for (type in Alignment.values()) {
         println("\n-------------------------------------------")
-        print(alignText(type, 1, text))
+        print(alignText(type, 25, text))
     }
 }

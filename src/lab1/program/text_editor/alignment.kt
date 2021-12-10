@@ -64,9 +64,10 @@ private fun wordTransfer(width: Int, text: MutableList<String>) {
             if (text[i].lastIndexOf(' ') != -1) {
                 // transfer one word if there is space
                 text[i + 1] = text[i].substringAfterLast(' ') +
-                        if (text[i + 1].isNotEmpty()) " " else "" + text[i + 1]
+                        if (text[i + 1].isNotEmpty()) {" "} else {""} + text[i + 1]
                 text[i] = text[i].substringBeforeLast(' ')
-            } else {
+            }
+            else {
                 val transferredSymbols = if (text[i].length - width == 1 && width != 1 &&
                     text[i].last() in arrayOf('!', ',', '.', ':', '-', ';', '?')
                 ) 1 else 0
