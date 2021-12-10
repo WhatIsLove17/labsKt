@@ -19,6 +19,20 @@ class ArithmeticExpression(expression: String) {
         this.postfixExpression = infixToPostfix(this.expression)
     }
 
+    private fun isThereFunction(line: String, index: Int): String {
+        return when (line.substring(index, index + 2)) {
+            "tg" -> "tg"
+            "lg" -> "lg"
+            "ln" -> "ln"
+            else -> when (line.substring(index, index + 3)) {
+                "sin" -> "sin"
+                "cos" -> "cos"
+                "ctg" -> "ctg"
+                else -> throw IllegalArgumentException("Expression contains invalid symbols")
+            }
+        }
+    }
+
     //method returns operator's priority
     private fun priority(operator: String): Int {
         return when (operator) {
@@ -37,6 +51,7 @@ class ArithmeticExpression(expression: String) {
         val strExp = expression.filter {
             it != ' '
         }
+
         val listExpression = ArrayList<String>()
         var brackets = 0
         var i = 0
@@ -88,35 +103,8 @@ class ArithmeticExpression(expression: String) {
                         listExpression.add("+")
                 }
                 else -> {
-                    when (strExp.substring(i, i + 2)) {
-                        "tg" -> {
-                            listExpression.add("tg")
-                            i++
-                        }
-                        "lg" -> {
-                            listExpression.add("lg")
-                            i++
-                        }
-                        "ln" -> {
-                            listExpression.add("ln")
-                            i++
-                        }
-                        else -> when (strExp.substring(i, i + 3)) {
-                            "sin" -> {
-                                listExpression.add("sin")
-                                i += 2
-                            }
-                            "cos" -> {
-                                listExpression.add("cos")
-                                i += 2
-                            }
-                            "ctg" -> {
-                                listExpression.add("ctg")
-                                i += 2
-                            }
-                            else -> throw IllegalArgumentException("Expression contains invalid symbols")
-                        }
-                    }
+                    listExpression.add(isThereFunction(strExp, i))
+                    i += listExpression.last().length - 1
                 }
             }
 
