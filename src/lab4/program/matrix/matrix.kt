@@ -120,3 +120,67 @@ open class MyMatrix(_countRows: Int, _countColumns: Int, private val fillingNumb
     }
 }
 
+class MyMutableMatrix(_countRows: Int, _countColumns: Int, fillingNumber: Double = 0.0) :
+    MyMatrix(_countRows, _countColumns, fillingNumber), IMyMutableMatrix {
+
+    override fun plusAssign(other: IMyMatrix) {
+        if (other.countColumns != this.countColumns || other.countRows != this.countRows)
+            throw IllegalArgumentException("the sizes of the matrices should be equal")
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                this[i, j] += other[i, j]
+    }
+
+    override fun minusAssign(other: IMyMatrix) {
+        if (other.countColumns != this.countColumns || other.countRows != this.countRows)
+            throw IllegalArgumentException("the sizes of the matrices should be equal")
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                this[i, j] -= other[i, j]
+    }
+
+    override fun timesAssign(scalar: Double) {
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                this[i, j] *= scalar
+    }
+
+    override fun timesAssign(other: IMyMatrix) {
+        if (this.countColumns != other.countRows)
+            throw IllegalArgumentException("Count of Rows of the first matrix should be equal count of columns of the second matrix")
+        val result = Array(this.countRows) { Array(other.countColumns) { 0.0 } }
+        for (i in 0 until this.countRows)
+            for (j in 0 until other.countColumns) {
+                for (k in 0 until this.countColumns)
+                    result[i][j] += this[i, k] * other[k, j]
+            }
+        matrix = result
+        this.countColumns = other.countColumns
+    }
+
+    override fun divAssign(scalar: Double) {
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                this[i, j] /= scalar
+    }
+
+    override fun set(i: Int, j: Int, value: Double) {
+        matrix[i][j] = value
+    }
+
+    override fun unaryMinus(): IMyMatrix {
+        val result = MyMutableMatrix(this.countRows, this.countColumns)
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                result[i, j] = -this[i, j]
+        return result
+    }
+
+    override fun unaryPlus(): IMyMatrix {
+        val result = MyMutableMatrix(this.countRows, this.countColumns)
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                result[i, j] = this[i, j]
+        return result
+    }
+}
