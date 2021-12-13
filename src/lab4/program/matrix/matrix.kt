@@ -1,74 +1,72 @@
 package lab4.program.matrix
 
-interface IMyMatrix {
-    var countRows: Int
-    var countColumns: Int
-    operator fun plus(other: IMyMatrix): IMyMatrix
-    operator fun minus(other: IMyMatrix): IMyMatrix
-    operator fun times(scalar: Double): IMyMatrix
-    operator fun div(scalar: Double): IMyMatrix
+interface Matrix {
+    val countRows: Int
+    val countColumns: Int
+    operator fun plus(other: Matrix): Matrix
+    operator fun minus(other: Matrix): Matrix
+    operator fun times(scalar: Double): Matrix
+    operator fun div(scalar: Double): Matrix
     operator fun get(i: Int, j: Int): Double
     override fun equals(other: Any?): Boolean
-    operator fun times(other: IMyMatrix): IMyMatrix
+    operator fun times(other: Matrix): Matrix
+    operator fun unaryMinus(): Matrix
+    operator fun unaryPlus(): Matrix
     override fun hashCode(): Int
     override fun toString(): String
 }
 
-interface IMyMutableMatrix {
-    operator fun plusAssign(other: IMyMatrix)
-    operator fun minusAssign(other: IMyMatrix)
+interface MutableMatrix : Matrix {
+    operator fun plusAssign(other: Matrix)
+    operator fun minusAssign(other: Matrix)
     operator fun timesAssign(scalar: Double)
     operator fun divAssign(scalar: Double)
     operator fun set(i: Int, j: Int, value: Double)
-    operator fun unaryMinus(): IMyMatrix
-    operator fun unaryPlus(): IMyMatrix
-    operator fun timesAssign(other: IMyMatrix)
+    operator fun timesAssign(other: Matrix)
 }
 
-open class MyMatrix(_countRows: Int, _countColumns: Int, private val fillingNumber: Double = 0.0) : IMyMatrix {
+open class MatrixImpl(_countRows: Int, _countColumns: Int, private val fillingNumber: Double = 0.0) : Matrix {
 
-    final override var countRows: Int = _countRows
-        set(value) {
-            if (value > 0) field = value
-            else throw IllegalArgumentException("matrix's count of rows and columns should be more than zero")
-        }
-    final override var countColumns: Int = _countColumns
-        set(value) {
-            if (value > 0) field = value
-            else throw IllegalArgumentException("matrix's count of rows and columns should be more than zero")
-        }
-    protected var matrix: Array<Array<Double>> = Array(countRows) { Array(countColumns) { fillingNumber } }
+    final override val countRows: Int
+        get() = matrix.size
+    final override val countColumns: Int
+        get() = matrix[0].size
+    protected var matrix: Array<Array<Double>> = Array(_countRows) { Array(_countColumns) { fillingNumber } }
 
-    override operator fun plus(other: IMyMatrix): IMyMatrix {
+    constructor(_matrix: Array<Array<Double>>) : this(_matrix.size, _matrix[0].size) {
+        matrix = _matrix
+    }
+
+    override operator fun plus(other: Matrix): Matrix {
         if (other.countColumns != this.countColumns || other.countRows != this.countRows)
             throw IllegalArgumentException("the sizes of the matrices should be equal")
-        val result = MyMatrix(this.countRows, this.countColumns)
+        val result = MatrixImpl(this.countRows, this.countColumns)
         for (i in 0 until this.countRows)
             for (j in 0 until this.countColumns)
                 result.matrix[i][j] = this[i, j] + other[i, j]
         return result
     }
 
-    override operator fun minus(other: IMyMatrix): IMyMatrix {
+    override operator fun minus(other: Matrix): Matrix {
         if (other.countColumns != this.countColumns || other.countRows != this.countRows)
             throw IllegalArgumentException("the sizes of the matrices should be equal")
-        val result = MyMatrix(this.countRows, this.countColumns)
+        val result = MatrixImpl(this.countRows, this.countColumns)
         for (i in 0 until this.countRows)
             for (j in 0 until this.countColumns)
                 result.matrix[i][j] = this[i, j] - other[i, j]
         return result
     }
 
-    override operator fun times(scalar: Double): IMyMatrix {
-        val result = MyMatrix(this.countRows, this.countColumns)
+    override operator fun times(scalar: Double): Matrix {
+        val result = MatrixImpl(this.countRows, this.countColumns)
         for (i in 0 until this.countRows)
             for (j in 0 until this.countColumns)
                 result.matrix[i][j] = this[i, j] * scalar
         return result
     }
 
-    override operator fun div(scalar: Double): IMyMatrix {
-        val result = MyMatrix(this.countRows, this.countColumns)
+    override operator fun div(scalar: Double): Matrix {
+        val result = MatrixImpl(this.countRows, this.countColumns)
         for (i in 0 until this.countRows)
             for (j in 0 until this.countColumns)
                 result.matrix[i][j] = this[i, j] / scalar
@@ -80,7 +78,7 @@ open class MyMatrix(_countRows: Int, _countColumns: Int, private val fillingNumb
     }
 
     override fun equals(other: Any?): Boolean {
-        if (other !is MyMatrix) return false
+        if (other !is Matrix) return false
         if (this.countRows != other.countRows || this.countColumns != other.countColumns)
             return false
         for (i in 0 until this.countRows)
@@ -89,10 +87,10 @@ open class MyMatrix(_countRows: Int, _countColumns: Int, private val fillingNumb
         return true
     }
 
-    override operator fun times(other: IMyMatrix): IMyMatrix {
+    override operator fun times(other: Matrix): Matrix {
         if (this.countRows != other.countColumns)
             throw IllegalArgumentException("Count of Rows of the first matrix should be equal count of columns of the second matrix")
-        val result = MyMatrix(this.countRows, other.countColumns)
+        val result = MatrixImpl(this.countRows, other.countColumns)
         for (i in 0 until result.countRows)
             for (j in 0 until result.countColumns) {
                 for (k in 0 until this.countColumns)
@@ -101,10 +99,25 @@ open class MyMatrix(_countRows: Int, _countColumns: Int, private val fillingNumb
         return result
     }
 
+    override fun unaryMinus(): Matrix {
+        val result = Array(countRows) { Array(countColumns) { fillingNumber } }
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                result[i][j] = -this[i, j]
+        return MatrixImpl(result)
+    }
+
+    override fun unaryPlus(): Matrix {
+        val result = Array(countRows) { Array(countColumns) { fillingNumber } }
+        for (i in 0 until this.countRows)
+            for (j in 0 until this.countColumns)
+                result[i][j] = this[i, j]
+        return MatrixImpl(result)
+    }
+
     override fun hashCode(): Int {
         var result = countRows
         result = 31 * result + countColumns
-        result = 31 * result + fillingNumber.hashCode()
         result = 31 * result + matrix.contentDeepHashCode()
         return result
     }
@@ -120,10 +133,11 @@ open class MyMatrix(_countRows: Int, _countColumns: Int, private val fillingNumb
     }
 }
 
-class MyMutableMatrix(_countRows: Int, _countColumns: Int, fillingNumber: Double = 0.0) :
-    MyMatrix(_countRows, _countColumns, fillingNumber), IMyMutableMatrix {
 
-    override fun plusAssign(other: IMyMatrix) {
+class MutableMatrixImpl(_countRows: Int, _countColumns: Int, fillingNumber: Double = 0.0) :
+    MatrixImpl(_countRows, _countColumns, fillingNumber), MutableMatrix {
+
+    override fun plusAssign(other: Matrix) {
         if (other.countColumns != this.countColumns || other.countRows != this.countRows)
             throw IllegalArgumentException("the sizes of the matrices should be equal")
         for (i in 0 until this.countRows)
@@ -131,7 +145,7 @@ class MyMutableMatrix(_countRows: Int, _countColumns: Int, fillingNumber: Double
                 this[i, j] += other[i, j]
     }
 
-    override fun minusAssign(other: IMyMatrix) {
+    override fun minusAssign(other: Matrix) {
         if (other.countColumns != this.countColumns || other.countRows != this.countRows)
             throw IllegalArgumentException("the sizes of the matrices should be equal")
         for (i in 0 until this.countRows)
@@ -145,7 +159,7 @@ class MyMutableMatrix(_countRows: Int, _countColumns: Int, fillingNumber: Double
                 this[i, j] *= scalar
     }
 
-    override fun timesAssign(other: IMyMatrix) {
+    override fun timesAssign(other: Matrix) {
         if (this.countColumns != other.countRows)
             throw IllegalArgumentException("Count of Rows of the first matrix should be equal count of columns of the second matrix")
         val result = Array(this.countRows) { Array(other.countColumns) { 0.0 } }
@@ -154,8 +168,7 @@ class MyMutableMatrix(_countRows: Int, _countColumns: Int, fillingNumber: Double
                 for (k in 0 until this.countColumns)
                     result[i][j] += this[i, k] * other[k, j]
             }
-        matrix = result
-        this.countColumns = other.countColumns
+        this.matrix = result
     }
 
     override fun divAssign(scalar: Double) {
@@ -168,19 +181,4 @@ class MyMutableMatrix(_countRows: Int, _countColumns: Int, fillingNumber: Double
         matrix[i][j] = value
     }
 
-    override fun unaryMinus(): IMyMatrix {
-        val result = MyMutableMatrix(this.countRows, this.countColumns)
-        for (i in 0 until this.countRows)
-            for (j in 0 until this.countColumns)
-                result[i, j] = -this[i, j]
-        return result
-    }
-
-    override fun unaryPlus(): IMyMatrix {
-        val result = MyMutableMatrix(this.countRows, this.countColumns)
-        for (i in 0 until this.countRows)
-            for (j in 0 until this.countColumns)
-                result[i, j] = this[i, j]
-        return result
-    }
 }

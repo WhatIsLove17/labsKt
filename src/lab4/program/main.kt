@@ -1,17 +1,19 @@
 package lab4.program
 
-import lab4.program.matrix.MyMatrix
-import lab4.program.matrix.MyMutableMatrix
+import lab4.program.matrix.MatrixImpl
+import lab4.program.matrix.MutableMatrixImpl
+
 
 fun main() {
-    val matrix = MyMutableMatrix(3, 3, 17.0)
+
+    val matrix = MutableMatrixImpl(3, 3, 17.0)
     //method ToString
     println(matrix)
     //operator set
     matrix[0, 1] = 5.00
     println(matrix)
 
-    var matrix2 = MyMatrix(3, 3, 17.0)
+    var matrix2 = MatrixImpl(3, 3, 17.0)
     //method equals
     println(matrix == matrix2)
 
@@ -42,7 +44,12 @@ fun main() {
     println(matrix)
 
     //operator *=
-    matrix2 = MyMatrix(3, 4, 2.0)
+    val arrMatrix = arrayOf(
+        arrayOf(1.0, 2.0),
+        arrayOf(3.0, 4.0),
+        arrayOf(5.0, 6.0)
+    )
+    matrix2 = MatrixImpl(arrMatrix)
     matrix *= matrix2
     println(matrix)
 
