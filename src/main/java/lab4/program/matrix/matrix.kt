@@ -34,7 +34,13 @@ open class MatrixImpl(_countRows: Int, _countColumns: Int, private val fillingNu
     protected var matrix: Array<Array<Double>> = Array(_countRows) { Array(_countColumns) { fillingNumber } }
 
     constructor(_matrix: Array<Array<Double>>) : this(_matrix.size, _matrix[0].size) {
-        matrix = _matrix
+        if (_matrix.isEmpty()) throw IllegalArgumentException("the transmitted matrix is empty")
+        _matrix.forEach {
+            if (it.size != countColumns) throw IllegalArgumentException("All rows in the transmitted matrix must be same size")
+        }
+        for (i in 0 until countRows)
+            for (j in 0 until countColumns)
+                matrix[i][j] = _matrix[i][j]
     }
 
     override operator fun plus(other: Matrix): Matrix {
