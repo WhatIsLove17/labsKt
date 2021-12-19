@@ -79,6 +79,7 @@ interface LibraryService {
 }
 
 class LibraryServiceImpl(val maxCountBooks: Int = 3) : LibraryService {
+
     private val logger: Logger = LogManager.getLogger(this.javaClass.name)
 
     private val userList = ArrayList<User>()
@@ -120,19 +121,23 @@ class LibraryServiceImpl(val maxCountBooks: Int = 3) : LibraryService {
         if (!bookMap.contains(book)) throw IllegalArgumentException("Library hasn't that book")
 
         bookMap[book] = status
+        logger.info("Status of $book was changed")
     }
 
     override fun addBook(book: Book, status: Status) {
         bookMap[book] = status
+        logger.info("$book was added in library")
     }
 
     override fun registerUser(user: User) {
         if (userList.contains(user)) throw IllegalArgumentException("User is already registered in library")
         userList.add(user)
+        logger.info("$user was registered in library")
     }
 
     override fun unregisterUser(user: User) {
         userList.remove(user)
+        logger.info("$user was unregistered in library")
     }
 
     override fun takeBook(user: User, book: Book) {
@@ -144,6 +149,7 @@ class LibraryServiceImpl(val maxCountBooks: Int = 3) : LibraryService {
 
         bookMap[book] = Status.UsedBy(user)
         user.countBooks++
+        logger.info("$user took $book")
     }
 
     override fun returnBook(book: Book) {
@@ -158,5 +164,7 @@ class LibraryServiceImpl(val maxCountBooks: Int = 3) : LibraryService {
             user = status.user
         }
         bookMap[book] = Status.Available
+        logger.info("$user returned $book")
     }
+
 }
