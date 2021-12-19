@@ -1,8 +1,6 @@
 package lab6.shapecollector
 
 import lab3.program.shapes.*
-import java.lang.reflect.Type
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 object ShapeComparators {
     val areaComparator = Comparator<Shape> { o1, o2 ->
@@ -56,7 +54,7 @@ class ShapeCollector<T : Shape> {
         return allShapes.sortedWith(comparator)
     }
 
-    fun getAllByClass(shape: Class<out T>): List<out T> {
+    fun getAllByClass(shape: Class<out T>): List<T> {
         return allShapes.filter { it.javaClass == shape }
     }
 
