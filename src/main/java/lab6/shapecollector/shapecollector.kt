@@ -1,5 +1,6 @@
 package lab6.shapecollector
 
+import kotlinx.serialization.Serializable
 import lab3.program.shapes.*
 
 object ShapeComparators {

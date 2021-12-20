@@ -1,5 +1,6 @@
 package lab3.program.shapes
 
+import kotlinx.serialization.Serializable
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -8,7 +9,8 @@ interface Shape {
     fun calcPerimeter(): Double
 }
 
-class Circle(val radius: Double) : Shape {
+@Serializable
+data class Circle(val radius: Double) : Shape {
 
     init {
         if (radius <= 0) throw IllegalArgumentException("Radius should be more than zero")
@@ -27,7 +29,8 @@ class Circle(val radius: Double) : Shape {
     }
 }
 
-class Square(val side: Double) : Shape {
+@Serializable
+data class Square(val side: Double) : Shape {
 
     init {
         if (side <= 0) throw IllegalArgumentException("Side should be more than zero")
@@ -46,7 +49,8 @@ class Square(val side: Double) : Shape {
     }
 }
 
-class Rectangle(val sideA: Double, val sideB: Double) : Shape {
+@Serializable
+data class Rectangle(val sideA: Double, val sideB: Double) : Shape {
 
     init {
         if (sideA <= 0) throw IllegalArgumentException("SideA should be more than zero")
@@ -66,7 +70,8 @@ class Rectangle(val sideA: Double, val sideB: Double) : Shape {
     }
 }
 
-class Triangle(val sideA: Double, val sideB: Double, val sideC: Double) : Shape {
+@Serializable
+data class Triangle(val sideA: Double, val sideB: Double, val sideC: Double) : Shape {
     init {
         if (sideA >= sideB + sideC ||
             sideB >= sideA + sideC ||
