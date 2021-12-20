@@ -35,14 +35,14 @@ fun main() {
 
         println(library.getAllAvailableBooks())
 
-        library.takeBook(user1, library.getAllBooks()[0])
+        library.takeBook(user1, library.findBooks("Aven")[0])
         //library.takeBook(User("Petr Petrov"), library.getAllBooks()[0])
-        library.takeBook(user1, library.getAllAvailableBooks()[0])
-        library.takeBook(user1, library.getAllAvailableBooks()[0])
+        library.takeBook(user1, library.findBooks("Omag")[0])
+        library.takeBook(user1, library.findBooks("7 skil")[0])
 
         println(library.getAllAvailableBooks())
         library.returnBook(library.findBooks("Aven")[0])
-        library.returnBook(library.findBooks("Omag")[0])
+        library.returnBook(library.findBooks("Omaga")[0])
         println(library.getAllAvailableBooks())
 
         library.takeBook(user2, library.getAllAvailableBooks()[0])

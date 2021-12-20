@@ -19,7 +19,7 @@ data class Author(val fullName: String) {
     }
 }
 
-data class User(val fullName: String, var countBooks: Int = 0) {
+data class User(val fullName: String) {
     val firstName = fullName.substringBefore(' ')
     val secondName = fullName.substringAfter(' ')
     override fun toString(): String {
@@ -82,8 +82,8 @@ class LibraryServiceImpl(val maxCountBooks: Int = 3) : LibraryService {
 
     private val logger: Logger = LogManager.getLogger(this.javaClass.name)
 
-    private val userList = ArrayList<User>()
-    private val bookMap = HashMap<Book, Status>()
+    private val userSet = mutableSetOf<User>()
+    private val bookMap = mutableMapOf<Book, Status>()
 
     override fun findBooks(substring: String): List<Book> {
         return bookMap.filterKeys { it.name.contains(substring) }.keys.toList()
@@ -130,41 +130,35 @@ class LibraryServiceImpl(val maxCountBooks: Int = 3) : LibraryService {
     }
 
     override fun registerUser(user: User) {
-        if (userList.contains(user)) throw IllegalArgumentException("User is already registered in library")
-        userList.add(user)
+        if (userSet.contains(user)) throw IllegalArgumentException("User is already registered in library")
+        userSet.add(user)
         logger.info("$user was registered in library")
     }
 
     override fun unregisterUser(user: User) {
-        userList.remove(user)
+        if (!userSet.contains(user)) throw IllegalArgumentException("User isn't registered in library")
+        userSet.remove(user)
         logger.info("$user was unregistered in library")
     }
 
     override fun takeBook(user: User, book: Book) {
-        val userIndex = userList.indexOf(user)
-        if (userIndex == -1) throw IllegalArgumentException("The user is not registered in the library")
+        val countBooks = bookMap.filterValues { it is Status.UsedBy && it.user == user }.count()
+        if (countBooks >= maxCountBooks) throw IllegalArgumentException("The user can't have more than $maxCountBooks")
+        if (!userSet.contains(user)) throw IllegalArgumentException("The user is not registered in the library")
         if (!bookMap.contains(book)) throw IllegalArgumentException("Library hasn't that book")
-        if (user.countBooks >= maxCountBooks) throw IllegalArgumentException("The user can't have more than $maxCountBooks")
         if (bookMap[book] !is Status.Available) throw java.lang.IllegalArgumentException("Book isn't available")
 
         bookMap[book] = Status.UsedBy(user)
-        user.countBooks++
         logger.info("$user took $book")
     }
 
     override fun returnBook(book: Book) {
         if (!bookMap.contains(book))
             throw IllegalArgumentException("Library hasn't that book")
+        if (bookMap[book] !is Status.UsedBy) throw IllegalArgumentException("The book isn't used by the user")
 
-        var user = User("Nothing nothing", 0)
-
-        val status = bookMap[book]
-        if (status is Status.UsedBy) {
-            status.user.countBooks--
-            user = status.user
-        }
         bookMap[book] = Status.Available
-        logger.info("$user returned $book")
+        logger.info("The user returned $book")
     }
 
 }
