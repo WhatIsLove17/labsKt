@@ -50,12 +50,12 @@ class ShapeCollector<T : Shape> {
         return allShapes.toList()
     }
 
-    fun getAllSorted(comparator: Comparator<T>): List<T> {
+    fun getAllSorted(comparator: Comparator<in T>): List<T> {
         return allShapes.sortedWith(comparator)
     }
 
     fun getAllByClass(shape: Class<out T>): List<T> {
-        return allShapes.filter { it.javaClass == shape }
+        return allShapes.filterIsInstance(shape)
     }
 
 }
